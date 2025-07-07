@@ -8,6 +8,7 @@
 #include "zynq.dtsi"
 
 #include <dt-bindings/interrupt-controller/irq.h>
+#include <dt-bindings/pinctrl/pinctrl-zynq.h>
 
 / {
 	model = "Analog Devices PlutoSDR Rev.A (Z7010/AD9363)";
@@ -414,4 +415,81 @@
 		reset-gpios = <&gpio0 67 0>;
 
 	};
+
 };
+
+&pinctrl0 {
+status = "okay";
+
+	pinctrl_uart0_default: uart0-default {
+		mux {
+			groups = "uart0_0_grp";
+			function = "uart0";
+		};
+
+		conf {
+			groups = "uart0_0_grp";
+			slew-rate = <0>;
+			power-source = <IO_STANDARD_LVCMOS18>;
+		};
+
+		conf-tx {
+			pins = "MIO11";
+			bias-disable;
+		};
+
+		conf-rx {
+			pins = "MIO10";
+			bias-high-impedance;
+		};
+	};
+
+	pinctrl_i2c0_default: i2c0-default {
+		mux {
+			groups = "i2c0_0_grp";
+			function = "i2c0";
+		};
+
+		conf {
+			groups = "i2c0_0_grp";
+			slew-rate = <0>;
+			power-source = <IO_STANDARD_LVCMOS18>;
+		};
+
+		conf-sda {
+			pins = "MIO48";
+			bias-pull-up;
+		};
+
+		conf-scl {
+			pins = "MIO49";
+			bias-pull-up;
+		};
+	};
+};
+
+&uart0 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_uart0_default>;
+};
+
+&aliases {
+	serial1 = &uart0;
+};
+
+&i2c0 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_i2c0_default>;
+	clock-frequency = <100000>;
+
+	// Add your I2C device nodes below (optional for now)
+	/*
+	temp-sensor@48 {
+		compatible = "your,sensor-compatible";
+		reg = <0x48>;
+	};
+	*/
+};
+
