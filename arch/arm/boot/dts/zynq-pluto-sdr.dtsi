@@ -6,7 +6,6 @@
  * Licensed under the GPL-2.
  */
 #include "zynq.dtsi"
-
 #include <dt-bindings/interrupt-controller/irq.h>
 #include <dt-bindings/pinctrl/pinctrl-zynq.h>
 
@@ -15,10 +14,6 @@
 	memory {
 		device_type = "memory";
 		reg = <0x00000000 0x20000000>;
-	};
-
-	chosen {
-		stdout-path = "/amba@0/uart@E0001000";
 	};
 
 	clocks {
@@ -229,6 +224,8 @@
 
 		/* ENSM Mode */
 		adi,frequency-division-duplex-mode-enable;
+		//adi,ensm-enable-pin-control-enable;
+		//adi,rx-fastlock-pincontrol-enable;
 		//adi,ensm-enable-pin-pulse-mode-enable;
 		//adi,ensm-enable-txnrx-control-enable;
 
@@ -421,6 +418,20 @@
 &pinctrl0 {
 status = "okay";
 
+	pinctrl_i2c1_default: i2c1-default {
+		mux {
+			groups = "i2c1_9_grp";
+			function = "i2c1";
+		};
+
+		conf {
+			groups = "i2c1_9_grp";
+			bias-pull-up;
+			slew-rate = <0>;
+			power-source = <IO_STANDARD_LVCMOS18>;
+		};
+	};
+
 	pinctrl_uart0_default: uart0-default {
 		mux {
 			groups = "uart0_0_grp";
@@ -442,46 +453,15 @@ status = "okay";
 			pins = "MIO10";
 			bias-high-impedance;
 		};
-	};
+ 	};
 
-	pinctrl_i2c0_default: i2c0-default {
-		mux {
-			groups = "i2c0_0_grp";
-			function = "i2c0";
-		};
-
-		conf {
-			groups = "i2c0_0_grp";
-			slew-rate = <0>;
-			power-source = <IO_STANDARD_LVCMOS18>;
-		};
-
-		conf-sda {
-			pins = "MIO48";
-			bias-pull-up;
-		};
-
-		conf-scl {
-			pins = "MIO49";
-			bias-pull-up;
-		};
-	};
 };
 
-&uart0 {
+
+&i2c1 {
 	status = "okay";
 	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_uart0_default>;
-};
-
-&aliases {
-	serial1 = &uart0;
-};
-
-&i2c0 {
-	status = "okay";
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_i2c0_default>;
+	pinctrl-0 = <&pinctrl_i2c1_default>;
 	clock-frequency = <100000>;
 
 	// Add your I2C device nodes below (optional for now)
@@ -493,3 +473,8 @@ status = "okay";
 	*/
 };
 
+&uart0 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_uart0_default>;
+};

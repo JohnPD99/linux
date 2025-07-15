@@ -17,7 +17,7 @@
 #include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/interrupt-controller/irq.h>
 
-/* These GPIO hogs are configured by u-boot environment */
+/* These GPIO hogs are configured by u-boot environment
 &gpio0 {
 	clock_extern_en {
 		gpio-hog;
@@ -31,6 +31,7 @@
 		output-low;
 	};
 };
+*/ 
 
 &amba {
 	axi_tdd_0: axi-tdd-0@7C440000 {
